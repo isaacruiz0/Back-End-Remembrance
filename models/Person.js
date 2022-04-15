@@ -7,8 +7,7 @@ const personSchema = new Schema({
     birthDay: String,
     gender: String,
     pronouns: String,
-    relationship:String,
-    creator: { type:mongoose.Types.ObjectId, required: true, ref: 'User' }
+    relationship:String
 })
 
 module.exports = mongoose.model('Person', personSchema)
