@@ -5,10 +5,15 @@ const cors = require('cors')
 const personController = require('./controllers/personController')
 const userController = require('./controllers/userController')
 
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+const bodyParser = require('body-parser')
+
 const PORT = process.env.PORT
 
 const app = express()
 
+const User = require('./models/User')
 // Middleware that allows json to be accepted
 app.use(express.urlencoded({extended:false}))
 app.use(express.json())
