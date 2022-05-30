@@ -1,5 +1,9 @@
 const express = require("express");
+const { authenticate } = require("passport");
 const Person = require('./../models/Person')
+
+// Middleware needed to authenticate the token of a request
+const authenticateToken = require('../jwtVerify/auth')
 
 const router = express.Router();
 
