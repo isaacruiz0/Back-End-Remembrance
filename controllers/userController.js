@@ -6,100 +6,62 @@ const { v4: uuidv4 } = require('uuid');
 const HttpError = require('../models/http-error')
 // Import User model
 const User = require('../models/User')
+const jwt = require("jsonwebtoken");
+const passport = require("passport");
 
-
-
-
-const DUMMY_USERS = [
-    {
-        id: 'u1',
-        name: 'Max Shwartz',
-        email: 'test@test.com',
-        password:'testerskjj'
+// S I G N     U P
+router.post('/signup', (req,res) =>{
+    User.register(new User({
+        name: req.body.name,
+        username:req.body.username
+    }), req.body.password, function (err, user){
+        if(err){
+            console.log(err);
+            res.status(500).send(err);
+        }
+        else {
+            // If successfully authenticated then it will move onto the next function
+            passport.authenticate("local")(req, res, function(){
+                const accessToken = jwt.sign(
+                    { username: req.body.username },
+                    process.env.ACCESS_TOKEN_SECRET
+                );
+                res.status(200).send({
+                    // This will be sent alongside requests
+                    accessToken,
+                    // This will link people to the User
+                    username: user.username,
+                    // This will allow the user to be greeted by their first name
+                    name: user.name,
+                });             
+            });
+        }Z
     }
-]
-
-router.get('/', async(req,res, next) =>{
-    let users;
-    try{
-        users = await User.find( {}, 'email name' );
-    }catch (err) {
-        const error = new HttpError(
-            'Fetching users failed, please try again later.', 500
-        );
-        return next(error)
-    }
-    res.json({users: users.map(user => user.toObject({ getters:true }))})
-    
+    )
 })
-router.post('/signup', async (req,res, next) =>{
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return next(
-            new HttpError('Invalid inputs passed, please check your data.', 422)
-        )
-    }
 
-
-    const { name, email, password } = req.body;
-
-    let existingUser
-    try {
-        existingUser = await User.findOne({ email: email})
-    } catch (err) {
-        const error = new HttpError(
-            "Signing up failed, please try again.", 500
-        );
-        return next(error)
-    }
-    
-    if(existingUser) {
-        const error = new HttpError(
-            'User exists already, please login instead.', 422
-        );
-        return next(error);
-    }
-
-
-    const createdUser = new User({
-        name,
-        email,
-        password,
-        people: []
-    });
-    try {
-    await createdUser.save();
-    } catch(err) {
-        const error = new HttpError(
-            'Signing up failed, please try again.', 500
-        )
-        return next(error)
-    }
-
-
-    res.status(201).json({user: createdUser.toObject({ getters: true })})
+// L O G   I N
+router.post('/login', (req,res) =>{
+    // These are the credentials that were sent from the frontend
+    User.findOne({username: req.body.username}, function(err, user) {
+        // This specififes the 'local' strategy, to authenticate requests.
+        passport.authenticate("local")(req, res, function(){
+            const accessToken = jwt.sign(
+                { username: req.body.username },            
+                process.env.ACCESS_TOKEN_SECRET
+            );
+            console.log(user)
+            
+            res.status(200).send({
+                accessToken,
+                username: user.username,
+                name: user.name,
+            }); 
+        })
+    })    
 })
-router.post('/login', async (req,res, next) =>{
-    const { email, password} = req.body;
 
-    let existingUser
-    try {
-        existingUser = await User.findOne({ email: email})
-    } catch (err) {
-        const error = new HttpError(
-            "Logging in failed, please try again.", 500
-        );
-        return next(error)
-    }
 
-    if (!existingUser || existingUser.password !== password) {
-        const error = new HttpError(
-            'Invalid credentials, could not log you in', 401
-        )
-        return next(error)
-    }
 
-    res.json({message: "Logged in!"})
-})
 
 module.exports = router
