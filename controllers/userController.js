@@ -13,7 +13,7 @@ const passport = require("passport");
 router.post('/signup', (req,res) =>{
     User.register(new User({
         name: req.body.name,
-        username:req.body.username
+        username: req.body.username,
     }), req.body.password, function (err, user){
         if(err){
             console.log(err);
@@ -35,7 +35,7 @@ router.post('/signup', (req,res) =>{
                     name: user.name,
                 });             
             });
-        }Z
+        }
     }
     )
 })

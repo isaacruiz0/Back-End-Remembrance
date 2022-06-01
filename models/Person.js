@@ -7,7 +7,14 @@ const personSchema = new Schema({
     birthDay: String,
     gender: String,
     pronouns: String,
-    relationship:String
+    relationship:String,
+    user: {
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        },
+        username: String,
+    }
 })
 
 module.exports = mongoose.model('Person', personSchema)
