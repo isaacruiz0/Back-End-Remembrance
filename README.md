@@ -17,7 +17,7 @@ isaac.ruiz.us@gmail.com
 ### Portfolio 
 https://isaac-ruiz.com/
 
-## Back End Repository
+## Front End Repository
 https://github.com/isaacruiz0/Front-End-Remembrance.git
 
 ## Frameworks
