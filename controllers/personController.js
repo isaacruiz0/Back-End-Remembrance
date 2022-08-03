@@ -15,6 +15,17 @@ router.get("/people",authenticateToken ,(req, res) => {
             people: people
         })))
 })
+router.get("/people/:id", (req,res) => {
+    Person.findById(req.params.id, function(err, person){
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json(person)
+            
+        }
+    })
+})
 
 // creates a person from database
 router.post("/createperson",authenticateToken ,(req, res) => {

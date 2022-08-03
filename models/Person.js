@@ -8,6 +8,8 @@ const personSchema = new Schema({
     gender: String,
     pronouns: String,
     relationship:String,
+    // These are the extra details stored in an array that a user can push to
+    extraDetails: [{key: String, value: String}],
     user: {
         id: {
             type: mongoose.Schema.Types.ObjectId,
