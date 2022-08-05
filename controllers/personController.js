@@ -26,6 +26,12 @@ router.get("/people/:id", (req,res) => {
         }
     })
 })
+// A request sent from the addDetails route will be used to add a trait in the details array
+router.put("/people/:id", (req,res) => {
+    Person.findByIdAndUpdate(req.params.id, {$push: req.body}).then((person) =>{
+        res.json(person)
+    })
+})
 
 // creates a person from database
 router.post("/createperson",authenticateToken ,(req, res) => {
